@@ -22,6 +22,7 @@ var lsCmd = &cobra.Command{
 		files, err := client.ListFiles()
 		if err != nil {
 			fmt.Fprintf(ioStreams.ErrOut, "error on getting files. %s\n", err.Error())
+			return
 		}
 
 		if len(files) == 0 && outputFormat == printer.OutputConsole {
