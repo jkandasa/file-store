@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	SERVER_ADDRESS_ENV = "FILE_SERVER"
+	SERVER_ADDRESS_ENV = "STORE_SERVER"
 )
 
 var (
