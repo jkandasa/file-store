@@ -103,3 +103,22 @@ Global Flags:
       --pretty          JSON pretty print
 
 ```
+
+## Build
+To build executables run the following command from the root location of the repository
+```bash
+./scripts/generate_executables.sh
+# generated executables will be available under ./builds
+```
+
+## Tests
+### Unit tests
+Unit tests are not fully covered. some of the tests are available.
+
+To run unit tests
+```bash
+$ go test -v ./...
+```
+
+### E2E tests
+There is no e2e tests available. e2e tests to be added.
