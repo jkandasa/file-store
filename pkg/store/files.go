@@ -9,6 +9,7 @@ import (
 	"sync"
 
 	"github.com/jkandasa/file-store/pkg/types"
+	"github.com/jkandasa/file-store/pkg/utils"
 	"go.uber.org/zap"
 )
 
@@ -23,10 +24,13 @@ func UpdateFilesStore() {
 
 	filesStore = make([]types.File, 0)
 
+	// create sore root directory if not exists
+	utils.CreateDir(types.STORE_DATA_PATH)
+
 	// Load file details to the store
-	files, err := os.ReadDir(types.HOME_PATH)
+	files, err := os.ReadDir(types.STORE_DATA_PATH)
 	if err != nil {
-		zap.L().Error("error on reading home directory", zap.String("homeDir", types.HOME_PATH), zap.Error(err))
+		zap.L().Error("error on reading home directory", zap.String("homeDir", types.STORE_DATA_PATH), zap.Error(err))
 		return
 	}
 	for _, entry := range files {
@@ -41,7 +45,7 @@ func UpdateFilesStore() {
 			// 	continue
 			// }
 
-			rawFile, err := os.Open(filepath.Join(types.HOME_PATH, file.Name()))
+			rawFile, err := os.Open(filepath.Join(types.STORE_DATA_PATH, file.Name()))
 			if err != nil {
 				zap.L().Error("error on getting file content", zap.String("filename", file.Name()), zap.Error(err))
 				continue

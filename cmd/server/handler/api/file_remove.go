@@ -32,7 +32,7 @@ func removeFiles(w http.ResponseWriter, r *http.Request) {
 	// remove files
 	errs := make([]error, 0)
 	for _, filename := range files {
-		_filename := filepath.Join(types.HOME_PATH, filename)
+		_filename := filepath.Join(types.STORE_DATA_PATH, filename)
 		if utils.IsFileExists(_filename) {
 			err := utils.RemoveFile(_filename)
 			if err != nil {

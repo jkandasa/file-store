@@ -36,7 +36,7 @@ func wcList(w http.ResponseWriter, r *http.Request) {
 			continue
 		}
 
-		filename := filepath.Join(types.HOME_PATH, file.Name)
+		filename := filepath.Join(types.STORE_DATA_PATH, file.Name)
 
 		fh, err := os.Open(filename)
 		if err != nil {
@@ -81,7 +81,7 @@ func freqWords(w http.ResponseWriter, r *http.Request) {
 			continue
 		}
 
-		filename := filepath.Join(types.HOME_PATH, file.Name)
+		filename := filepath.Join(types.STORE_DATA_PATH, file.Name)
 
 		fh, err := os.Open(filename)
 		if err != nil {

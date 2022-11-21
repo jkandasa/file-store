@@ -160,6 +160,5 @@ func GetFileInfo(filename string) (*types.File, error) {
 		MD5Hash:      fmt.Sprintf("%x", md5hash.Sum(nil)),
 	}
 
-	fmt.Println("file info:", f)
 	return f, nil
 }

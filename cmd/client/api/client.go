@@ -85,8 +85,6 @@ func (c *Client) addFiles(files []string, apiPath string) error {
 			return err
 		}
 
-		fmt.Println(responseText)
-
 		switch types.FileResponse(responseText) {
 		case types.FileResponseCloned, types.FileResponseUpToDate:
 			// no action needed

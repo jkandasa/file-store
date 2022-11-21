@@ -44,23 +44,22 @@ func modifyFiles(w http.ResponseWriter, r *http.Request, supportUpdate bool) {
 	// verify the content or file already exists
 	file := store.GetByName(reqFile.Name)
 	if file != nil {
-		if file.MD5Hash != reqFile.MD5Hash {
-			if supportUpdate {
+		if supportUpdate {
+			if file.MD5Hash != reqFile.MD5Hash {
 				handlerUtils.PostSuccessResponse(w, string(types.FileResponseNotAvailable))
 			} else {
-				handlerUtils.PostSuccessResponse(w, string(types.FileResponseNameExists))
+				handlerUtils.PostSuccessResponse(w, string(types.FileResponseUpToDate))
 			}
-		} else {
-			handlerUtils.PostSuccessResponse(w, string(types.FileResponseUpToDate))
 		}
+		handlerUtils.PostSuccessResponse(w, string(types.FileResponseNameExists))
 		return
 	}
 
 	// if content of the file already present, clone it
 	file = store.GetByHash(reqFile.MD5Hash)
 	if file != nil {
-		srcFile := filepath.Join(types.HOME_PATH, file.Name)
-		dstFile := filepath.Join(types.HOME_PATH, reqFile.Name)
+		srcFile := filepath.Join(types.STORE_DATA_PATH, file.Name)
+		dstFile := filepath.Join(types.STORE_DATA_PATH, reqFile.Name)
 		err = utils.CopyFile(srcFile, dstFile, true)
 		if err != nil {
 			handlerUtils.PostErrorResponse(w, err.Error(), http.StatusInternalServerError)
@@ -86,7 +85,7 @@ func addDataBucket(w http.ResponseWriter, r *http.Request) {
 
 	// add it in to tmp location
 	filename := fmt.Sprintf("%s_%s", fileBucket.UUID, fileBucket.File.Name)
-	err = utils.AppendFile(filepath.Join(types.HOME_PATH, types.TMP_PATH), filename, fileBucket.Data, fileBucket.Index*fileBucket.BucketSize)
+	err = utils.AppendFile(filepath.Join(types.STORE_DATA_PATH, types.TMP_PATH), filename, fileBucket.Data, fileBucket.Index*fileBucket.BucketSize)
 	if err != nil {
 		handlerUtils.PostErrorResponse(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -94,8 +93,8 @@ func addDataBucket(w http.ResponseWriter, r *http.Request) {
 
 	// file copy done, it is time to place it on the actual location
 	if fileBucket.IsLastBucket {
-		srcFile := filepath.Join(types.HOME_PATH, types.TMP_PATH, filename)
-		dstFile := filepath.Join(types.HOME_PATH, fileBucket.File.Name)
+		srcFile := filepath.Join(types.STORE_DATA_PATH, types.TMP_PATH, filename)
+		dstFile := filepath.Join(types.STORE_DATA_PATH, fileBucket.File.Name)
 		err = utils.CopyFile(srcFile, dstFile, true)
 		if err != nil {
 			zap.L().Error("error on copying the file to actual location", zap.String("filename", fileBucket.File.Name), zap.Error(err))
