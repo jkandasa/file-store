@@ -50,7 +50,7 @@ do
   platform_raw=(${platform//\// })
   GOOS=${platform_raw[0]}
   GOARCH=${platform_raw[1]}
-  package_name_client="store-${GOOS}-${GOARCH}"
+  package_name_client="store-client${GOOS}-${GOARCH}"
   package_name_server="store-server-${GOOS}-${GOARCH}"
 
   env GOOS=${GOOS} GOARCH=${GOARCH} CGO_ENABLED=0 go build -o ${BUILD_DIR}/${BINARY_DIR}/${package_name_client} -ldflags "-s -w $LD_FLAGS" cmd/client/main.go
