@@ -1,4 +1,4 @@
-name: golangci-lint
+name: tests
 on:
   push:
     branches: [master]
@@ -6,9 +6,10 @@ on:
   pull_request:
 
 jobs:
-  golang-lint:
+  setup:
     name: tests
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-go@v2
