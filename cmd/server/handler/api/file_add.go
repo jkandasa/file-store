@@ -50,6 +50,7 @@ func modifyFiles(w http.ResponseWriter, r *http.Request, supportUpdate bool) {
 			} else {
 				handlerUtils.PostSuccessResponse(w, string(types.FileResponseUpToDate))
 			}
+			return
 		}
 		handlerUtils.PostSuccessResponse(w, string(types.FileResponseNameExists))
 		return
