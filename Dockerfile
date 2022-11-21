@@ -3,6 +3,9 @@ RUN mkdir /app
 ADD . /app
 WORKDIR /app
 
+# include git
+RUN apk add --no-cache git
+
 ARG GOPROXY
 # download deps before gobuild
 RUN go mod download -x
