@@ -123,5 +123,5 @@ $ go test -v ./pkg/... ./cmd/...
 ### E2E tests
 To run e2e tests
 ```bash
-$ go test -v ./test/e2e/...
+$ ./scripts/run_e2e_tests.sh
 ```
