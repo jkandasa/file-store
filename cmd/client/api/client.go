@@ -59,6 +59,12 @@ func (c *Client) RemoveFiles(files []string) error {
 	return err
 }
 
+func (c *Client) RemoveAllFiles() error {
+	client := newHttpClient(c.Insecure, DefaultTimeout.String())
+	_, err := client.executeJson(fmt.Sprintf("%s/api/file/remove-all", c.ServerAddress), http.MethodGet, nil, nil, nil, 0)
+	return err
+}
+
 func (c *Client) AddFiles(files []string) error {
 	return c.addFiles(files, "/api/file/add")
 }

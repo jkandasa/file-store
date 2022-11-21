@@ -117,8 +117,11 @@ Unit tests are not fully covered. some of the tests are available.
 
 To run unit tests
 ```bash
-$ go test -v ./...
+$ go test -v ./pkg/... ./cmd/...
 ```
 
 ### E2E tests
-There is no e2e tests available. e2e tests to be added.
+To run e2e tests
+```bash
+$ go test -v ./test/e2e/...
+```
