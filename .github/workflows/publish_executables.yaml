@@ -1,0 +1,39 @@
+name: publish executables
+on:
+  push:
+    branches: [master]
+    tags: ["v*"]
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout the source code
+        uses: actions/checkout@v2
+
+      - uses: actions/setup-go@v2
+        with:
+          go-version: ^1.19
+
+      - name: Cache go modules
+        uses: actions/cache@v2
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+      - name: build executable bundles
+        run: ./scripts/generate_executables.sh
+
+      - name: Update executables for master branch changes
+        if: startsWith(github.ref, 'refs/heads/master') # executes only for changes in master
+        uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GH_TOKEN }}"
+          automatic_release_tag: master
+          prerelease: true
+          title: "master branch build - Pre Release"
+          files: |
+            builds/*.tar.gz
+            builds/*.zip
