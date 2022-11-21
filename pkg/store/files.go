@@ -25,7 +25,10 @@ func UpdateFilesStore() {
 	filesStore = make([]types.File, 0)
 
 	// create sore root directory if not exists
-	utils.CreateDir(types.STORE_DATA_PATH)
+	err := utils.CreateDir(types.STORE_DATA_PATH)
+	if err != nil {
+		zap.L().Fatal("error on creating store data path", zap.String("location", types.STORE_DATA_PATH), zap.Error(err))
+	}
 
 	// Load file details to the store
 	files, err := os.ReadDir(types.STORE_DATA_PATH)
