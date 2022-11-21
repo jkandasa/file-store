@@ -12,7 +12,11 @@ import (
 	"github.com/jkandasa/file-store/pkg/utils"
 )
 
-const DefaultTimeout = time.Second * 30
+const (
+	DefaultTimeout = time.Second * 30
+	MaximumRetry   = 5
+	RetryDelay     = time.Second * 1
+)
 
 // ResponseConfig of a request
 type ResponseConfig struct {
@@ -49,8 +53,26 @@ func newHttpClient(insecure bool, timeout string) *HttpClient {
 	return &HttpClient{httpClient: httpClient}
 }
 
-// executeJson execute http request and returns response
 func (c *HttpClient) executeJson(url, method string, headers map[string]string, queryParams map[string]interface{},
+	body interface{}, responseCode int) (*ResponseConfig, error) {
+	var res *ResponseConfig
+	var err error
+	for retryCount := 1; retryCount <= MaximumRetry; retryCount++ {
+		res, err = c.executeJsonWithRetry(url, method, headers, queryParams, body, responseCode)
+		if res != nil &&
+			(res.StatusCode == http.StatusBadGateway ||
+				res.StatusCode == http.StatusServiceUnavailable ||
+				res.StatusCode == http.StatusGatewayTimeout) {
+			time.Sleep(RetryDelay)
+		} else {
+			return res, err
+		}
+	}
+	return res, err
+}
+
+// executeJson execute http request and returns response, also handles network error
+func (c *HttpClient) executeJsonWithRetry(url, method string, headers map[string]string, queryParams map[string]interface{},
 	body interface{}, responseCode int) (*ResponseConfig, error) {
 	// add body, if available
 	var buf io.ReadWriter
