@@ -125,3 +125,30 @@ To run e2e tests
 ```bash
 $ ./scripts/run_e2e_tests.sh
 ```
+
+## Deploy in Kubernetes and OpenShift
+* Kubernetes
+```bash
+$ kubectl create -f ./kubernetes/kubernetes.yaml
+```
+
+* OpenShift
+```bash
+$ oc create -f ./kubernetes/openshift.yaml
+
+$ oc get route -n store
+NAME   HOST/PORT                                            PATH   SERVICES     PORT   TERMINATION   WILDCARD
+fs     fs-store.apps.private-host.com          file-store   http   edge          None
+```
+
+* client
+```bash
+export STORE_SERVER=https://fs-store.apps.private-host.com
+
+$ ./store add /tmp/file_hi.txt 
+Files are added successfully
+
+$ ./store ls
+NAME       	SIZE	MD5 HASH                        	MODIFIED TIME                           
+file_hi.txt	3   	764efa883dda1e11db47671c4a3bbd9e	2022-11-21 08:57:57.797868333 +0000 UTC	
+```

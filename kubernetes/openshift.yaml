@@ -1,0 +1,89 @@
+# create namespace
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: store
+spec: {}
+
+# deploy store server
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: file-store
+  name: file-store
+  namespace: store
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: file-store
+  template:
+    metadata:
+      labels:
+        app: file-store
+    spec:
+      containers:
+      - image: quay.io/jkandasa/file-store-server:master
+        name: file-store-server
+        volumeMounts:
+          - name: store-data-dir
+            mountPath: /app/_store
+            readOnly: false
+        livenessProbe:
+          httpGet:
+            path: /api/version
+            port: 8080
+          initialDelaySeconds: 3
+          periodSeconds: 3
+        resources: {}
+        securityContext:
+          allowPrivilegeEscalation: false
+          runAsNonRoot: true
+          seccompProfile:
+            type: RuntimeDefault
+          capabilities:
+            drop:
+            - ALL
+      volumes:
+        - name: store-data-dir
+          emptyDir: {}
+
+# create service
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: file-store
+  name: file-store
+  namespace: store
+spec:
+  ports:
+  - name: http
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: file-store
+  type: ClusterIP
+
+# create route
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  labels:
+    app: file-store
+  name: fs
+  namespace: store
+spec:
+  port:
+    targetPort: http
+  tls:
+    termination: edge
+  to:
+    name: file-store
